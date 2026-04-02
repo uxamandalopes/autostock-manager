@@ -12,6 +12,7 @@ import CadastroPiloto from "./pages/CadastroPiloto";
 import CadastroVeiculo from "./pages/CadastroVeiculo";
 import CadastroPecas from "./pages/CadastroPecas";
 import CadastroServicos from "./pages/CadastroServicos";
+import NovaOcorrencia from "./pages/NovaOcorrencia";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
