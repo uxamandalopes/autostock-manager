@@ -29,44 +29,81 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import catalogoImg from "@/assets/catalogo-pecas.png";
 
 interface CatalogPart {
   id: number;
   name: string;
   partNumber: string;
-  category: string;
 }
 
 interface SelectedPart extends CatalogPart {
   quantity: number;
 }
 
+// Parts mapped to the numbered diagram (1-26)
 const catalogParts: CatalogPart[] = [
-  { id: 1, name: "Para-choque Dianteiro", partNumber: "PCH-D001", category: "Carroceria" },
-  { id: 2, name: "Para-choque Traseiro", partNumber: "PCH-T002", category: "Carroceria" },
-  { id: 3, name: "Capô", partNumber: "CPO-003", category: "Carroceria" },
-  { id: 4, name: "Para-lama Esquerdo", partNumber: "PLM-E004", category: "Carroceria" },
-  { id: 5, name: "Para-lama Direito", partNumber: "PLM-D005", category: "Carroceria" },
-  { id: 6, name: "Porta Dianteira Esquerda", partNumber: "PRT-DE006", category: "Carroceria" },
-  { id: 7, name: "Porta Dianteira Direita", partNumber: "PRT-DD007", category: "Carroceria" },
-  { id: 8, name: "Porta Traseira Esquerda", partNumber: "PRT-TE008", category: "Carroceria" },
-  { id: 9, name: "Porta Traseira Direita", partNumber: "PRT-TD009", category: "Carroceria" },
-  { id: 10, name: "Retrovisor Esquerdo", partNumber: "RTV-E010", category: "Acessórios" },
-  { id: 11, name: "Retrovisor Direito", partNumber: "RTV-D011", category: "Acessórios" },
-  { id: 12, name: "Farol Esquerdo", partNumber: "FRL-E012", category: "Iluminação" },
-  { id: 13, name: "Farol Direito", partNumber: "FRL-D013", category: "Iluminação" },
-  { id: 14, name: "Lanterna Esquerda", partNumber: "LNT-E014", category: "Iluminação" },
-  { id: 15, name: "Lanterna Direita", partNumber: "LNT-D015", category: "Iluminação" },
-  { id: 16, name: "Vidro Parabrisa", partNumber: "VDR-P016", category: "Vidros" },
-  { id: 17, name: "Vidro Traseiro", partNumber: "VDR-T017", category: "Vidros" },
-  { id: 18, name: "Radiador", partNumber: "RAD-018", category: "Motor" },
-  { id: 19, name: "Disco de Freio Dianteiro", partNumber: "FRE-D019", category: "Freios" },
-  { id: 20, name: "Disco de Freio Traseiro", partNumber: "FRE-T020", category: "Freios" },
+  { id: 1, name: "Para-choque Dianteiro Completo", partNumber: "PCH-001" },
+  { id: 2, name: "Suporte Farol de Neblina", partNumber: "SFN-002" },
+  { id: 3, name: "Parafuso de Fixação", partNumber: "PFX-003" },
+  { id: 4, name: "Bucha de Fixação", partNumber: "BCH-004" },
+  { id: 5, name: "Grade Inferior Esquerda", partNumber: "GIE-005" },
+  { id: 6, name: "Defletor Inferior", partNumber: "DFI-006" },
+  { id: 7, name: "Grade Superior", partNumber: "GSP-007" },
+  { id: 8, name: "Moldura Superior", partNumber: "MLS-008" },
+  { id: 9, name: "Friso Para-choque", partNumber: "FPC-009" },
+  { id: 10, name: "Grade Lateral Direita", partNumber: "GLD-010" },
+  { id: 11, name: "Defletor Lateral", partNumber: "DFL-011" },
+  { id: 12, name: "Caixa de Ar", partNumber: "CXA-012" },
+  { id: 13, name: "Suporte Lateral Direito", partNumber: "SLD-013" },
+  { id: 14, name: "Moldura Farol Direito", partNumber: "MFD-014" },
+  { id: 15, name: "Suporte Inferior Direito", partNumber: "SID-015" },
+  { id: 16, name: "Presilha de Fixação", partNumber: "PRF-016" },
+  { id: 17, name: "Saia Lateral Esquerda", partNumber: "SLE-017" },
+  { id: 18, name: "Protetor Inferior Central", partNumber: "PIC-018" },
+  { id: 19, name: "Suporte Inferior Esquerdo", partNumber: "SIE-019" },
+  { id: 20, name: "Acabamento Inferior", partNumber: "ABI-020" },
+  { id: 21, name: "Saia Lateral Direita", partNumber: "SLD-021" },
+  { id: 22, name: "Reforço Superior", partNumber: "RFS-022" },
+  { id: 23, name: "Suporte de Reforço", partNumber: "SRF-023" },
+  { id: 24, name: "Presilha Superior", partNumber: "PRS-024" },
+  { id: 25, name: "Grampo de Fixação", partNumber: "GFX-025" },
+  { id: 26, name: "Suporte Lateral Inferior", partNumber: "SLI-026" },
+];
+
+// Hotspot positions (% based) mapped to each numbered circle in the image
+const hotspots: { id: number; x: number; y: number }[] = [
+  { id: 1, x: 5, y: 50 },
+  { id: 2, x: 22, y: 42 },
+  { id: 3, x: 24, y: 47 },
+  { id: 4, x: 27, y: 40 },
+  { id: 5, x: 18, y: 35 },
+  { id: 6, x: 40, y: 80 },
+  { id: 7, x: 20, y: 24 },
+  { id: 8, x: 22, y: 16 },
+  { id: 9, x: 16, y: 30 },
+  { id: 10, x: 52, y: 42 },
+  { id: 11, x: 42, y: 52 },
+  { id: 12, x: 72, y: 18 },
+  { id: 13, x: 68, y: 28 },
+  { id: 14, x: 62, y: 32 },
+  { id: 15, x: 78, y: 55 },
+  { id: 16, x: 80, y: 48 },
+  { id: 17, x: 12, y: 88 },
+  { id: 18, x: 48, y: 90 },
+  { id: 19, x: 60, y: 88 },
+  { id: 20, x: 72, y: 90 },
+  { id: 21, x: 82, y: 85 },
+  { id: 22, x: 42, y: 5 },
+  { id: 23, x: 52, y: 10 },
+  { id: 24, x: 55, y: 14 },
+  { id: 25, x: 85, y: 40 },
+  { id: 26, x: 88, y: 48 },
 ];
 
 const etapas = ["TREINO OPCIONAL 1", "TREINO OPCIONAL 2", "QUALIFICAÇÃO", "CORRIDA 1", "CORRIDA 2"];
 const sessoes = ["MANHÃ", "TARDE", "NOITE"];
-const ocorrencias = ["COLISÃO", "SAÍDA DE PISTA", "FALHA MECÂNICA", "INCIDENTE EM BOX", "OUTRO"];
+const ocorrenciasOptions = ["COLISÃO", "SAÍDA DE PISTA", "FALHA MECÂNICA", "INCIDENTE EM BOX", "OUTRO"];
 
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
@@ -79,11 +116,13 @@ const NovaOcorrencia = () => {
   const [nomeAnalista, setNomeAnalista] = useState("");
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
 
-  const addPart = (part: CatalogPart) => {
+  const addPart = (id: number) => {
+    const part = catalogParts.find((p) => p.id === id);
+    if (!part) return;
     setSelectedParts((prev) => {
-      const existing = prev.find((p) => p.id === part.id);
+      const existing = prev.find((p) => p.id === id);
       if (existing) {
-        return prev.map((p) => (p.id === part.id ? { ...p, quantity: p.quantity + 1 } : p));
+        return prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p));
       }
       return [...prev, { ...part, quantity: 1 }];
     });
@@ -113,8 +152,6 @@ const NovaOcorrencia = () => {
     toast.success("Solicitação de estoque enviada com sucesso!");
     navigate("/ocorrencias");
   };
-
-  const categories = [...new Set(catalogParts.map((p) => p.category))];
 
   return (
     <div className="p-8">
@@ -186,7 +223,7 @@ const NovaOcorrencia = () => {
           <Select value={ocorrencia} onValueChange={setOcorrencia}>
             <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
             <SelectContent>
-              {ocorrencias.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+              {ocorrenciasOptions.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -197,46 +234,42 @@ const NovaOcorrencia = () => {
         </div>
       </div>
 
-      {/* Catalog + Selected Parts */}
+      {/* Catalog Image + Selected Parts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Parts Catalog */}
+        {/* Interactive Image Catalog */}
         <div>
           <h2 className="text-xl font-semibold mb-4 text-foreground">Catálogo de Peças</h2>
-          <div className="space-y-4">
-            {categories.map((cat) => (
-              <div key={cat}>
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">{cat}</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {catalogParts
-                    .filter((p) => p.category === cat)
-                    .map((part) => {
-                      const isSelected = selectedParts.some((sp) => sp.id === part.id);
-                      return (
-                        <button
-                          key={part.id}
-                          onClick={() => addPart(part)}
-                          className={cn(
-                            "relative rounded-lg border p-3 text-left text-sm transition-all hover:shadow-md cursor-pointer",
-                            isSelected
-                              ? "border-primary bg-primary/10 ring-1 ring-primary"
-                              : "border-border bg-card hover:border-primary/50"
-                          )}
-                        >
-                          <span className="absolute top-1 right-2 text-xs font-mono text-muted-foreground">
-                            {part.partNumber}
-                          </span>
-                          <span className="font-medium text-foreground block mt-3">{part.name}</span>
-                          {isSelected && (
-                            <span className="text-xs text-primary font-semibold mt-1 block">
-                              ✓ Adicionada ({selectedParts.find((sp) => sp.id === part.id)?.quantity})
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                </div>
-              </div>
-            ))}
+          <p className="text-sm text-muted-foreground mb-3">
+            Clique nos números da imagem para adicionar peças à lista.
+          </p>
+          <div className="relative inline-block w-full border rounded-lg overflow-hidden bg-white">
+            <img
+              src={catalogoImg}
+              alt="Catálogo de peças - diagrama explodido"
+              className="w-full h-auto"
+              draggable={false}
+            />
+            {/* Clickable hotspots */}
+            {hotspots.map((spot) => {
+              const isSelected = selectedParts.some((p) => p.id === spot.id);
+              const part = catalogParts.find((p) => p.id === spot.id);
+              return (
+                <button
+                  key={spot.id}
+                  onClick={() => addPart(spot.id)}
+                  title={part ? `${spot.id} - ${part.name} (${part.partNumber})` : `Peça ${spot.id}`}
+                  className={cn(
+                    "absolute w-7 h-7 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[10px] font-bold transition-all cursor-pointer border-2 hover:scale-125 z-10",
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary shadow-lg scale-110"
+                      : "bg-white/90 text-foreground border-muted-foreground/40 hover:border-primary hover:bg-primary/10"
+                  )}
+                  style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
+                >
+                  {spot.id}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -247,7 +280,7 @@ const NovaOcorrencia = () => {
           </h2>
           {selectedParts.length === 0 ? (
             <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-              Clique nas peças do catálogo para adicioná-las aqui.
+              Clique nos números do catálogo para adicionar peças aqui.
             </div>
           ) : (
             <div className="rounded-lg border overflow-hidden">
