@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        nav: {
+          active: "hsl(var(--nav-active))",
+          "active-foreground": "hsl(var(--nav-active-foreground))",
+          "sub-active": "hsl(var(--nav-sub-active))",
+          "sub-active-foreground": "hsl(var(--nav-sub-active-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
