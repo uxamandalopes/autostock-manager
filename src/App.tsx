@@ -12,6 +12,7 @@ import CadastroPiloto from "./pages/CadastroPiloto";
 import CadastroVeiculo from "./pages/CadastroVeiculo";
 import CadastroPecas from "./pages/CadastroPecas";
 import CadastroServicos from "./pages/CadastroServicos";
+import NovaOcorrencia from "./pages/NovaOcorrencia";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Navigate to="/ocorrencias" replace />} />
             <Route path="ocorrencias" element={<Ocorrencias />} />
+            <Route path="ocorrencias/nova" element={<NovaOcorrencia />} />
             <Route path="analise-danos" element={<AnaliseDanos />} />
             <Route path="cronogramas/funilaria" element={<Funilaria />} />
             <Route path="cronogramas/revisao" element={<Revisao />} />
