@@ -87,7 +87,7 @@ const Ocorrencias = () => {
               <Trash2 className="mr-1" /> Excluir ({selected.size})
             </Button>
           )}
-          <Button>
+          <Button onClick={() => navigate("/ocorrencias/nova")}>
             <Plus className="mr-1" /> Nova ocorrência
           </Button>
         </div>

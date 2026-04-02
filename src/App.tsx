@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Navigate to="/ocorrencias" replace />} />
             <Route path="ocorrencias" element={<Ocorrencias />} />
+            <Route path="ocorrencias/nova" element={<NovaOcorrencia />} />
             <Route path="analise-danos" element={<AnaliseDanos />} />
             <Route path="cronogramas/funilaria" element={<Funilaria />} />
             <Route path="cronogramas/revisao" element={<Revisao />} />
