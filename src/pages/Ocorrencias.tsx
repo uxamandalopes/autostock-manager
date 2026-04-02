@@ -28,6 +28,7 @@ const initialData: Ocorrencia[] = [
 ];
 
 const Ocorrencias = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState<Ocorrencia[]>(initialData);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [sortAsc, setSortAsc] = useState(true);
