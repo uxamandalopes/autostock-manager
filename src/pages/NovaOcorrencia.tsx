@@ -24,7 +24,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CalendarIcon, ArrowLeft, Plus, Minus, Trash2, Search } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { CalendarIcon, ArrowLeft, Plus, Minus, Trash2, Search, ChevronsUpDown } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -52,10 +67,10 @@ const NovaOcorrencia = () => {
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
   const [activeCategory, setActiveCategory] = useState("frente");
   const [manualSearch, setManualSearch] = useState("");
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [addPartOpen, setAddPartOpen] = useState(false);
 
   const currentCatalog = catalogCategories[activeCategory];
-
-  // Gather all parts from all categories for manual search
   const allParts = Object.values(catalogCategories).flatMap((cat) => cat.parts);
 
   const filteredManualParts = manualSearch.trim()
@@ -193,18 +208,36 @@ const NovaOcorrencia = () => {
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
-            <Select value={activeCategory} onValueChange={setActiveCategory}>
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Selecione o catálogo" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryOrder.map((key) => (
-                  <SelectItem key={key} value={key}>
-                    {catalogCategories[key].label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-[250px] justify-between">
+                  {catalogCategories[activeCategory].label}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[250px] p-0">
+                <Command>
+                  <CommandInput placeholder="Buscar catálogo..." />
+                  <CommandList>
+                    <CommandEmpty>Nenhum catálogo encontrado.</CommandEmpty>
+                    <CommandGroup>
+                      {categoryOrder.map((key) => (
+                        <CommandItem
+                          key={key}
+                          value={catalogCategories[key].label}
+                          onSelect={() => {
+                            setActiveCategory(key);
+                            setCatalogOpen(false);
+                          }}
+                        >
+                          {catalogCategories[key].label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
             Clique nos números da imagem para adicionar peças à lista.
@@ -216,7 +249,6 @@ const NovaOcorrencia = () => {
               className="w-full h-auto max-h-[600px] object-contain"
               draggable={false}
             />
-            {/* Clickable hotspots */}
             {currentCatalog.hotspots.map((spot) => {
               const isSelected = selectedParts.some((p) => p.id === spot.id);
               const part = currentCatalog.parts.find((p) => p.id === spot.id);
@@ -246,24 +278,32 @@ const NovaOcorrencia = () => {
             Peças Selecionadas ({selectedParts.length})
           </h2>
 
-          {/* Manual search */}
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar peça por nome ou partnumber..."
-              className="pl-9"
-              value={manualSearch}
-              onChange={(e) => setManualSearch(e.target.value)}
-            />
-            {filteredManualParts.length > 0 && (
-              <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                {filteredManualParts.map((part) => (
+          <Dialog open={addPartOpen} onOpenChange={(open) => { setAddPartOpen(open); if (!open) setManualSearch(""); }}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full mb-4">
+                <Plus className="mr-2 h-4 w-4" /> Adicionar Peça
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Adicionar Peça Manualmente</DialogTitle>
+              </DialogHeader>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por nome ou partnumber..."
+                  className="pl-9"
+                  value={manualSearch}
+                  onChange={(e) => setManualSearch(e.target.value)}
+                />
+              </div>
+              <div className="max-h-64 overflow-y-auto border rounded-md">
+                {(manualSearch.trim() ? filteredManualParts : allParts).map((part) => (
                   <button
                     key={part.id}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                    className="w-full text-left px-3 py-2.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors border-b last:border-b-0"
                     onClick={() => {
                       addPart(part);
-                      setManualSearch("");
                       toast.success(`${part.name} adicionada.`);
                     }}
                   >
@@ -271,13 +311,16 @@ const NovaOcorrencia = () => {
                     <span className="text-muted-foreground ml-2 font-mono text-xs">{part.partNumber}</span>
                   </button>
                 ))}
+                {manualSearch.trim() && filteredManualParts.length === 0 && (
+                  <p className="p-4 text-sm text-muted-foreground text-center">Nenhuma peça encontrada.</p>
+                )}
               </div>
-            )}
-          </div>
+            </DialogContent>
+          </Dialog>
 
           {selectedParts.length === 0 ? (
             <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-              Clique nos números do catálogo ou busque uma peça acima.
+              Clique nos números do catálogo ou use o botão acima para adicionar peças.
             </div>
           ) : (
             <div className="rounded-lg border overflow-hidden">
