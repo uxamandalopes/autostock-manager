@@ -24,82 +24,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CalendarIcon, ArrowLeft, Plus, Minus, Trash2 } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Plus, Minus, Trash2, Search } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import catalogoImg from "@/assets/catalogo-pecas.png";
-
-interface CatalogPart {
-  id: number;
-  name: string;
-  partNumber: string;
-}
+import { catalogCategories, categoryOrder, type CatalogPart } from "@/data/catalogData";
 
 interface SelectedPart extends CatalogPart {
   quantity: number;
 }
-
-// Parts mapped to the numbered diagram (1-26)
-const catalogParts: CatalogPart[] = [
-  { id: 1, name: "Para-choque Dianteiro Completo", partNumber: "PCH-001" },
-  { id: 2, name: "Suporte Farol de Neblina", partNumber: "SFN-002" },
-  { id: 3, name: "Parafuso de Fixação", partNumber: "PFX-003" },
-  { id: 4, name: "Bucha de Fixação", partNumber: "BCH-004" },
-  { id: 5, name: "Grade Inferior Esquerda", partNumber: "GIE-005" },
-  { id: 6, name: "Defletor Inferior", partNumber: "DFI-006" },
-  { id: 7, name: "Grade Superior", partNumber: "GSP-007" },
-  { id: 8, name: "Moldura Superior", partNumber: "MLS-008" },
-  { id: 9, name: "Friso Para-choque", partNumber: "FPC-009" },
-  { id: 10, name: "Grade Lateral Direita", partNumber: "GLD-010" },
-  { id: 11, name: "Defletor Lateral", partNumber: "DFL-011" },
-  { id: 12, name: "Caixa de Ar", partNumber: "CXA-012" },
-  { id: 13, name: "Suporte Lateral Direito", partNumber: "SLD-013" },
-  { id: 14, name: "Moldura Farol Direito", partNumber: "MFD-014" },
-  { id: 15, name: "Suporte Inferior Direito", partNumber: "SID-015" },
-  { id: 16, name: "Presilha de Fixação", partNumber: "PRF-016" },
-  { id: 17, name: "Saia Lateral Esquerda", partNumber: "SLE-017" },
-  { id: 18, name: "Protetor Inferior Central", partNumber: "PIC-018" },
-  { id: 19, name: "Suporte Inferior Esquerdo", partNumber: "SIE-019" },
-  { id: 20, name: "Acabamento Inferior", partNumber: "ABI-020" },
-  { id: 21, name: "Saia Lateral Direita", partNumber: "SLD-021" },
-  { id: 22, name: "Reforço Superior", partNumber: "RFS-022" },
-  { id: 23, name: "Suporte de Reforço", partNumber: "SRF-023" },
-  { id: 24, name: "Presilha Superior", partNumber: "PRS-024" },
-  { id: 25, name: "Grampo de Fixação", partNumber: "GFX-025" },
-  { id: 26, name: "Suporte Lateral Inferior", partNumber: "SLI-026" },
-];
-
-// Hotspot positions (% based) mapped to each numbered circle in the image
-const hotspots: { id: number; x: number; y: number }[] = [
-  { id: 1, x: 5, y: 50 },
-  { id: 2, x: 22, y: 42 },
-  { id: 3, x: 24, y: 47 },
-  { id: 4, x: 27, y: 40 },
-  { id: 5, x: 18, y: 35 },
-  { id: 6, x: 40, y: 80 },
-  { id: 7, x: 20, y: 24 },
-  { id: 8, x: 22, y: 16 },
-  { id: 9, x: 16, y: 30 },
-  { id: 10, x: 52, y: 42 },
-  { id: 11, x: 42, y: 52 },
-  { id: 12, x: 72, y: 18 },
-  { id: 13, x: 68, y: 28 },
-  { id: 14, x: 62, y: 32 },
-  { id: 15, x: 78, y: 55 },
-  { id: 16, x: 80, y: 48 },
-  { id: 17, x: 12, y: 88 },
-  { id: 18, x: 48, y: 90 },
-  { id: 19, x: 60, y: 88 },
-  { id: 20, x: 72, y: 90 },
-  { id: 21, x: 82, y: 85 },
-  { id: 22, x: 42, y: 5 },
-  { id: 23, x: 52, y: 10 },
-  { id: 24, x: 55, y: 14 },
-  { id: 25, x: 85, y: 40 },
-  { id: 26, x: 88, y: 48 },
-];
 
 const etapas = ["TREINO OPCIONAL 1", "TREINO OPCIONAL 2", "QUALIFICAÇÃO", "CORRIDA 1", "CORRIDA 2"];
 const sessoes = ["MANHÃ", "TARDE", "NOITE"];
@@ -115,17 +50,35 @@ const NovaOcorrencia = () => {
   const [ocorrencia, setOcorrencia] = useState("");
   const [nomeAnalista, setNomeAnalista] = useState("");
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
+  const [activeCategory, setActiveCategory] = useState("frente");
+  const [manualSearch, setManualSearch] = useState("");
 
-  const addPart = (id: number) => {
-    const part = catalogParts.find((p) => p.id === id);
-    if (!part) return;
+  const currentCatalog = catalogCategories[activeCategory];
+
+  // Gather all parts from all categories for manual search
+  const allParts = Object.values(catalogCategories).flatMap((cat) => cat.parts);
+
+  const filteredManualParts = manualSearch.trim()
+    ? allParts.filter(
+        (p) =>
+          p.name.toLowerCase().includes(manualSearch.toLowerCase()) ||
+          p.partNumber.toLowerCase().includes(manualSearch.toLowerCase())
+      )
+    : [];
+
+  const addPart = (part: CatalogPart) => {
     setSelectedParts((prev) => {
-      const existing = prev.find((p) => p.id === id);
+      const existing = prev.find((p) => p.id === part.id);
       if (existing) {
-        return prev.map((p) => (p.id === id ? { ...p, quantity: p.quantity + 1 } : p));
+        return prev.map((p) => (p.id === part.id ? { ...p, quantity: p.quantity + 1 } : p));
       }
       return [...prev, { ...part, quantity: 1 }];
     });
+  };
+
+  const addPartById = (id: number) => {
+    const part = currentCatalog.parts.find((p) => p.id === id);
+    if (part) addPart(part);
   };
 
   const updateQuantity = (id: number, delta: number) => {
@@ -234,39 +187,53 @@ const NovaOcorrencia = () => {
         </div>
       </div>
 
-      {/* Catalog Image + Selected Parts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Interactive Image Catalog */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-foreground">Catálogo de Peças</h2>
+      {/* Catalog + Selected Parts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Interactive Image Catalog - takes 2 cols */}
+        <div className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
+            <Select value={activeCategory} onValueChange={setActiveCategory}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue placeholder="Selecione o catálogo" />
+              </SelectTrigger>
+              <SelectContent>
+                {categoryOrder.map((key) => (
+                  <SelectItem key={key} value={key}>
+                    {catalogCategories[key].label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <p className="text-sm text-muted-foreground mb-3">
             Clique nos números da imagem para adicionar peças à lista.
           </p>
-          <div className="relative inline-block w-full border rounded-lg overflow-hidden bg-white">
+          <div className="relative inline-block w-full border rounded-lg overflow-hidden bg-white max-h-[600px]">
             <img
               src={catalogoImg}
               alt="Catálogo de peças - diagrama explodido"
-              className="w-full h-auto"
+              className="w-full h-auto max-h-[600px] object-contain"
               draggable={false}
             />
             {/* Clickable hotspots */}
-            {hotspots.map((spot) => {
+            {currentCatalog.hotspots.map((spot) => {
               const isSelected = selectedParts.some((p) => p.id === spot.id);
-              const part = catalogParts.find((p) => p.id === spot.id);
+              const part = currentCatalog.parts.find((p) => p.id === spot.id);
               return (
                 <button
                   key={spot.id}
-                  onClick={() => addPart(spot.id)}
+                  onClick={() => addPartById(spot.id)}
                   title={part ? `${spot.id} - ${part.name} (${part.partNumber})` : `Peça ${spot.id}`}
                   className={cn(
-                    "absolute w-7 h-7 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[10px] font-bold transition-all cursor-pointer border-2 hover:scale-125 z-10",
+                    "absolute w-9 h-9 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-xs font-bold transition-all cursor-pointer border-2 hover:scale-125 z-10 shadow-md",
                     isSelected
-                      ? "bg-primary text-primary-foreground border-primary shadow-lg scale-110"
-                      : "bg-white/90 text-foreground border-muted-foreground/40 hover:border-primary hover:bg-primary/10"
+                      ? "bg-green-600 text-white border-green-700 shadow-green-400/40 scale-110"
+                      : "bg-white text-red-600 border-red-500 hover:border-red-700 hover:bg-red-50"
                   )}
                   style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
                 >
-                  {spot.id}
+                  {spot.id > 100 ? spot.id - Math.floor(spot.id / 100) * 100 : spot.id}
                 </button>
               );
             })}
@@ -278,59 +245,91 @@ const NovaOcorrencia = () => {
           <h2 className="text-xl font-semibold mb-4 text-foreground">
             Peças Selecionadas ({selectedParts.length})
           </h2>
+
+          {/* Manual search */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar peça por nome ou partnumber..."
+              className="pl-9"
+              value={manualSearch}
+              onChange={(e) => setManualSearch(e.target.value)}
+            />
+            {filteredManualParts.length > 0 && (
+              <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                {filteredManualParts.map((part) => (
+                  <button
+                    key={part.id}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+                    onClick={() => {
+                      addPart(part);
+                      setManualSearch("");
+                      toast.success(`${part.name} adicionada.`);
+                    }}
+                  >
+                    <span className="font-medium">{part.name}</span>
+                    <span className="text-muted-foreground ml-2 font-mono text-xs">{part.partNumber}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {selectedParts.length === 0 ? (
             <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-              Clique nos números do catálogo para adicionar peças aqui.
+              Clique nos números do catálogo ou busque uma peça acima.
             </div>
           ) : (
             <div className="rounded-lg border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-[#010101] hover:bg-[#010101]">
-                    <TableHead className="text-white font-semibold">Peça</TableHead>
-                    <TableHead className="text-white font-semibold">Part Number</TableHead>
-                    <TableHead className="text-white font-semibold text-center">Qtd</TableHead>
-                    <TableHead className="text-white font-semibold text-center">Ação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {selectedParts.map((part) => (
-                    <TableRow key={part.id}>
-                      <TableCell className="font-medium">{part.name}</TableCell>
-                      <TableCell className="font-mono text-sm">{part.partNumber}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => updateQuantity(part.id, -1)}
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="w-8 text-center font-semibold">{part.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => updateQuantity(part.id, 1)}
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <button
-                          className="text-muted-foreground hover:text-destructive transition-colors"
-                          onClick={() => removePart(part.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </TableCell>
+              <div className="max-h-[450px] overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-[hsl(0,0%,4%)] hover:bg-[hsl(0,0%,4%)]">
+                      <TableHead className="text-white font-semibold">Peça</TableHead>
+                      <TableHead className="text-white font-semibold">Part Number</TableHead>
+                      <TableHead className="text-white font-semibold text-center">Qtd</TableHead>
+                      <TableHead className="text-white font-semibold text-center">Ação</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedParts.map((part) => (
+                      <TableRow key={part.id}>
+                        <TableCell className="font-medium text-sm">{part.name}</TableCell>
+                        <TableCell className="font-mono text-xs">{part.partNumber}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-6 w-6"
+                              onClick={() => updateQuantity(part.id, -1)}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="w-6 text-center font-semibold text-sm">{part.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-6 w-6"
+                              onClick={() => updateQuantity(part.id, 1)}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <button
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            onClick={() => removePart(part.id)}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
               <div className="p-4 border-t">
                 <Button className="w-full" onClick={handleSubmit}>
                   Solicitar Estoque
