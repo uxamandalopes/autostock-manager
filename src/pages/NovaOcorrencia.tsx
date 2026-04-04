@@ -67,6 +67,9 @@ const NovaOcorrencia = () => {
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
   const [activeCategory, setActiveCategory] = useState("frente");
   const [manualSearch, setManualSearch] = useState("");
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [addPartOpen, setAddPartOpen] = useState(false);
 
   const currentCatalog = catalogCategories[activeCategory];
 
