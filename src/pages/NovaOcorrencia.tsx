@@ -211,18 +211,41 @@ const NovaOcorrencia = () => {
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
-            <Select value={activeCategory} onValueChange={setActiveCategory}>
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Selecione o catálogo" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryOrder.map((key) => (
-                  <SelectItem key={key} value={key}>
-                    {catalogCategories[key].label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-[250px] justify-between">
+                  {catalogCategories[activeCategory].label}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[250px] p-0">
+                <Command>
+                  <CommandInput
+                    placeholder="Buscar catálogo..."
+                    value={catalogSearch}
+                    onValueChange={setCatalogSearch}
+                  />
+                  <CommandList>
+                    <CommandEmpty>Nenhum catálogo encontrado.</CommandEmpty>
+                    <CommandGroup>
+                      {categoryOrder.map((key) => (
+                        <CommandItem
+                          key={key}
+                          value={catalogCategories[key].label}
+                          onSelect={() => {
+                            setActiveCategory(key);
+                            setCatalogOpen(false);
+                            setCatalogSearch("");
+                          }}
+                        >
+                          {catalogCategories[key].label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
           <p className="text-sm text-muted-foreground mb-3">
             Clique nos números da imagem para adicionar peças à lista.
