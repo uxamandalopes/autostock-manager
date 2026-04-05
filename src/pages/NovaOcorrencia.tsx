@@ -157,7 +157,7 @@ const NovaOcorrencia = () => {
         </div>
 
         <div className="space-y-2">
-          <Label>Chassi</Label>
+          <Label>Digite o chassi</Label>
           <Input placeholder="Ex: 123/II" value={chassi} onChange={(e) => setChassi(e.target.value)} />
         </div>
 
