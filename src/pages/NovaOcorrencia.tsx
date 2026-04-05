@@ -205,8 +205,8 @@ const NovaOcorrencia = () => {
       {/* Catalog + Selected Parts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Interactive Image Catalog - takes 2 cols */}
-        <div className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-2 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
             <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
               <PopoverTrigger asChild>
@@ -239,14 +239,11 @@ const NovaOcorrencia = () => {
               </PopoverContent>
             </Popover>
           </div>
-          <p className="text-sm text-muted-foreground mb-3">
-            Clique nos números da imagem para adicionar peças à lista.
-          </p>
-          <div className="relative inline-block w-full border rounded-lg overflow-hidden bg-white max-h-[600px]">
+          <div className="relative border rounded-lg overflow-hidden bg-white">
             <img
               src={catalogoImg}
               alt="Catálogo de peças - diagrama explodido"
-              className="w-full h-auto max-h-[600px] object-contain"
+              className="w-full h-auto object-contain"
               draggable={false}
             />
             {currentCatalog.hotspots.map((spot) => {
@@ -270,6 +267,9 @@ const NovaOcorrencia = () => {
               );
             })}
           </div>
+          <p className="text-xs text-muted-foreground">
+            Clique nos números da imagem para adicionar peças à lista.
+          </p>
         </div>
 
         {/* Selected Parts Table */}
