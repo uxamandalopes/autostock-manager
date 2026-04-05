@@ -53,7 +53,7 @@ interface SelectedPart extends CatalogPart {
 
 const etapas = ["TREINO OPCIONAL 1", "TREINO OPCIONAL 2", "QUALIFICAÇÃO", "CORRIDA 1", "CORRIDA 2"];
 const sessoes = ["MANHÃ", "TARDE", "NOITE"];
-const ocorrenciasOptions = ["COLISÃO", "SAÍDA DE PISTA", "FALHA MECÂNICA", "INCIDENTE EM BOX", "OUTRO"];
+const ocorrenciasOptions = ["AVARIA", "MANUTENÇÃO"];
 
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
