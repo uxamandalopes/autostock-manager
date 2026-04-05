@@ -283,7 +283,7 @@ const NovaOcorrencia = () => {
 
           <Dialog open={addPartOpen} onOpenChange={(open) => { setAddPartOpen(open); if (!open) setManualSearch(""); }}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-full mb-4">
+              <Button variant="outline" className="w-full mb-4 bg-white text-[hsl(0,100%,41%)] border-[hsl(0,100%,41%)] hover:bg-[hsl(0,100%,95%)] hover:text-[hsl(0,100%,35%)]">
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Peça
               </Button>
             </DialogTrigger>
