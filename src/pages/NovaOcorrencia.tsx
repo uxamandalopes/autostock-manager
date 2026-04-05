@@ -239,13 +239,14 @@ const NovaOcorrencia = () => {
                   </CommandList>
                 </Command>
               </PopoverContent>
-            </Popover>
+              </Popover>
+            </div>
           </div>
-          <div className="relative border rounded-lg overflow-hidden bg-white">
+          <div className="relative border rounded-lg overflow-hidden bg-white max-h-[500px]">
             <img
               src={catalogoImg}
               alt="Catálogo de peças - diagrama explodido"
-              className="w-full h-auto object-contain"
+              className="w-full h-auto object-contain max-h-[500px]"
               draggable={false}
             />
             {currentCatalog.hotspots.map((spot) => {
