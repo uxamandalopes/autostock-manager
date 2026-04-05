@@ -122,131 +122,140 @@ const NovaOcorrencia = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/ocorrencias")}>
-          <ArrowLeft />
+    <div className="p-6 lg:p-8 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" className="rounded-full" onClick={() => navigate("/ocorrencias")}>
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-3xl font-bold text-foreground">Nova Ocorrência</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Nova Ocorrência</h1>
+          <p className="text-sm text-muted-foreground">Preencha os dados e selecione as peças necessárias</p>
+        </div>
       </div>
 
-      {/* Form Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="space-y-2">
-          <Label>Data do Incidente</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(d) => d && setDate(d)}
-                initialFocus
-                className="p-3 pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+      {/* Form Card */}
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Dados do Incidente</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Data do Incidente</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn("w-full justify-start text-left font-normal h-9 text-sm", !date && "text-muted-foreground")}
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(d) => d && setDate(d)}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
 
-        <div className="space-y-2">
-          <Label>Digite o chassi</Label>
-          <Input placeholder="Ex: 123/II" value={chassi} onChange={(e) => setChassi(e.target.value)} />
-        </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Digite o chassi</Label>
+            <Input className="h-9 text-sm" placeholder="Ex: 123/II" value={chassi} onChange={(e) => setChassi(e.target.value)} />
+          </div>
 
-        <div className="space-y-2">
-          <Label>Piloto</Label>
-          <Input placeholder="Nome do piloto" value={piloto} onChange={(e) => setPiloto(e.target.value)} />
-        </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Piloto</Label>
+            <Input className="h-9 text-sm" placeholder="Nome do piloto" value={piloto} onChange={(e) => setPiloto(e.target.value)} />
+          </div>
 
-        <div className="space-y-2">
-          <Label>Etapa</Label>
-          <Select value={etapa} onValueChange={setEtapa}>
-            <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-            <SelectContent>
-              {etapas.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Etapa</Label>
+            <Select value={etapa} onValueChange={setEtapa}>
+              <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                {etapas.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="space-y-2">
-          <Label>Sessão</Label>
-          <Select value={sessao} onValueChange={setSessao}>
-            <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-            <SelectContent>
-              {sessoes.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Sessão</Label>
+            <Select value={sessao} onValueChange={setSessao}>
+              <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                {sessoes.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="space-y-2">
-          <Label>Ocorrência</Label>
-          <Select value={ocorrencia} onValueChange={setOcorrencia}>
-            <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-            <SelectContent>
-              {ocorrenciasOptions.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Ocorrência</Label>
+            <Select value={ocorrencia} onValueChange={setOcorrencia}>
+              <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Selecione" /></SelectTrigger>
+              <SelectContent>
+                {ocorrenciasOptions.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="space-y-2">
-          <Label>Nome Analista</Label>
-          <Input placeholder="Nome do analista" value={nomeAnalista} onChange={(e) => setNomeAnalista(e.target.value)} />
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium">Nome Analista</Label>
+            <Input className="h-9 text-sm" placeholder="Nome do analista" value={nomeAnalista} onChange={(e) => setNomeAnalista(e.target.value)} />
+          </div>
         </div>
       </div>
 
       {/* Catalog + Selected Parts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Interactive Image Catalog - takes 2 cols */}
-        <div className="lg:col-span-2 flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Catalog - 3 cols */}
+        <div className="lg:col-span-3 rounded-xl border bg-card shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between p-4 border-b bg-muted/30">
+            <h2 className="text-sm font-semibold text-foreground">Catálogo de Peças</h2>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">Filtrar por:</span>
+              <span className="text-xs font-medium text-muted-foreground">Filtrar por:</span>
               <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" role="combobox" className="w-[250px] justify-between">
-                  {catalogCategories[activeCategory].label}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[250px] p-0">
-                <Command>
-                  <CommandInput placeholder="Buscar catálogo..." />
-                  <CommandList>
-                    <CommandEmpty>Nenhum catálogo encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {categoryOrder.map((key) => (
-                        <CommandItem
-                          key={key}
-                          value={catalogCategories[key].label}
-                          onSelect={() => {
-                            setActiveCategory(key);
-                            setCatalogOpen(false);
-                          }}
-                        >
-                          {catalogCategories[key].label}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
+                  <Button variant="outline" role="combobox" size="sm" className="w-[200px] justify-between text-xs h-8">
+                    {catalogCategories[activeCategory].label}
+                    <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-0">
+                  <Command>
+                    <CommandInput placeholder="Buscar catálogo..." />
+                    <CommandList>
+                      <CommandEmpty>Nenhum catálogo encontrado.</CommandEmpty>
+                      <CommandGroup>
+                        {categoryOrder.map((key) => (
+                          <CommandItem
+                            key={key}
+                            value={catalogCategories[key].label}
+                            onSelect={() => {
+                              setActiveCategory(key);
+                              setCatalogOpen(false);
+                            }}
+                          >
+                            {catalogCategories[key].label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
               </Popover>
             </div>
           </div>
-          <div className="relative border rounded-lg overflow-hidden bg-white max-h-[500px]">
+
+          {/* Image only with hotspots */}
+          <div className="relative bg-white">
             <img
               src={catalogoImg}
-              alt="Catálogo de peças - diagrama explodido"
-              className="w-full h-auto object-contain max-h-[500px]"
+              alt="Catálogo de peças"
+              className="w-full h-auto object-contain"
               draggable={false}
             />
             {currentCatalog.hotspots.map((spot) => {
@@ -258,10 +267,10 @@ const NovaOcorrencia = () => {
                   onClick={() => addPartById(spot.id)}
                   title={part ? `${spot.id} - ${part.name} (${part.partNumber})` : `Peça ${spot.id}`}
                   className={cn(
-                    "absolute w-9 h-9 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-xs font-bold transition-all cursor-pointer border-2 hover:scale-125 z-10 shadow-md",
+                    "absolute w-8 h-8 -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center text-[11px] font-bold transition-all cursor-pointer border-2 hover:scale-125 z-10",
                     isSelected
-                      ? "bg-green-600 text-white border-green-700 shadow-green-400/40 scale-110"
-                      : "bg-white text-red-600 border-red-500 hover:border-red-700 hover:bg-red-50"
+                      ? "bg-green-600 text-white border-green-700 shadow-lg shadow-green-500/30 scale-110"
+                      : "bg-white/90 text-destructive border-destructive/60 hover:border-destructive hover:bg-red-50 shadow-md"
                   )}
                   style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
                 >
@@ -270,105 +279,107 @@ const NovaOcorrencia = () => {
               );
             })}
           </div>
-          <p className="text-xs text-muted-foreground">
-            Clique nos números da imagem para adicionar peças à lista.
+          <p className="text-[11px] text-muted-foreground px-4 py-2 border-t bg-muted/20">
+            Clique nos números para adicionar peças à lista.
           </p>
         </div>
 
-        {/* Selected Parts Table */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-foreground">
-            Peças Selecionadas ({selectedParts.length})
-          </h2>
+        {/* Selected Parts - 2 cols */}
+        <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col">
+          <div className="p-4 border-b bg-muted/30">
+            <h2 className="text-sm font-semibold text-foreground">
+              Peças Selecionadas
+              {selectedParts.length > 0 && (
+                <span className="ml-2 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold w-5 h-5">
+                  {selectedParts.length}
+                </span>
+              )}
+            </h2>
+          </div>
 
-          <Dialog open={addPartOpen} onOpenChange={(open) => { setAddPartOpen(open); if (!open) setManualSearch(""); }}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="w-full mb-4 bg-white text-[hsl(0,100%,41%)] border-[hsl(0,100%,41%)] hover:bg-[hsl(0,100%,95%)] hover:text-[hsl(0,100%,35%)]">
-                <Plus className="mr-2 h-4 w-4" /> Adicionar Peça
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Adicionar Peça Manualmente</DialogTitle>
-              </DialogHeader>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por nome ou partnumber..."
-                  className="pl-9"
-                  value={manualSearch}
-                  onChange={(e) => setManualSearch(e.target.value)}
-                />
-              </div>
-              <div className="max-h-64 overflow-y-auto border rounded-md">
-                {(manualSearch.trim() ? filteredManualParts : allParts).map((part) => (
-                  <button
-                    key={part.id}
-                    className="w-full text-left px-3 py-2.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors border-b last:border-b-0"
-                    onClick={() => {
-                      addPart(part);
-                      toast.success(`${part.name} adicionada.`);
-                    }}
-                  >
-                    <span className="font-medium">{part.name}</span>
-                    <span className="text-muted-foreground ml-2 font-mono text-xs">{part.partNumber}</span>
-                  </button>
-                ))}
-                {manualSearch.trim() && filteredManualParts.length === 0 && (
-                  <p className="p-4 text-sm text-muted-foreground text-center">Nenhuma peça encontrada.</p>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+          <div className="p-3">
+            <Dialog open={addPartOpen} onOpenChange={(open) => { setAddPartOpen(open); if (!open) setManualSearch(""); }}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="w-full bg-white text-destructive border-destructive/50 hover:bg-destructive/5 hover:text-destructive hover:border-destructive">
+                  <Plus className="mr-2 h-3.5 w-3.5" /> Adicionar Peça
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Adicionar Peça Manualmente</DialogTitle>
+                </DialogHeader>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por nome ou partnumber..."
+                    className="pl-9"
+                    value={manualSearch}
+                    onChange={(e) => setManualSearch(e.target.value)}
+                  />
+                </div>
+                <div className="max-h-64 overflow-y-auto border rounded-md">
+                  {(manualSearch.trim() ? filteredManualParts : allParts).map((part) => (
+                    <button
+                      key={part.id}
+                      className="w-full text-left px-3 py-2.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors border-b last:border-b-0"
+                      onClick={() => {
+                        addPart(part);
+                        toast.success(`${part.name} adicionada.`);
+                      }}
+                    >
+                      <span className="font-medium">{part.name}</span>
+                      <span className="text-muted-foreground ml-2 font-mono text-xs">{part.partNumber}</span>
+                    </button>
+                  ))}
+                  {manualSearch.trim() && filteredManualParts.length === 0 && (
+                    <p className="p-4 text-sm text-muted-foreground text-center">Nenhuma peça encontrada.</p>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
 
           {selectedParts.length === 0 ? (
-            <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
-              Clique nos números do catálogo ou use o botão acima para adicionar peças.
+            <div className="flex-1 flex items-center justify-center p-8">
+              <p className="text-sm text-muted-foreground text-center">
+                Nenhuma peça selecionada.<br />
+                <span className="text-xs">Clique no catálogo ou use o botão acima.</span>
+              </p>
             </div>
           ) : (
-            <div className="rounded-lg border overflow-hidden">
-              <div className="max-h-[450px] overflow-y-auto">
+            <div className="flex-1 flex flex-col">
+              <div className="flex-1 overflow-y-auto max-h-[400px]">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-[hsl(0,0%,4%)] hover:bg-[hsl(0,0%,4%)]">
-                      <TableHead className="text-white font-semibold">Peça</TableHead>
-                      <TableHead className="text-white font-semibold">Part Number</TableHead>
-                      <TableHead className="text-white font-semibold text-center">Qtd</TableHead>
-                      <TableHead className="text-white font-semibold text-center">Ação</TableHead>
+                    <TableRow className="bg-foreground hover:bg-foreground">
+                      <TableHead className="text-primary-foreground font-semibold text-xs">Peça</TableHead>
+                      <TableHead className="text-primary-foreground font-semibold text-xs">Part Number</TableHead>
+                      <TableHead className="text-primary-foreground font-semibold text-xs text-center">Qtd</TableHead>
+                      <TableHead className="text-primary-foreground font-semibold text-xs text-center w-12">Ação</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {selectedParts.map((part) => (
-                      <TableRow key={part.id}>
-                        <TableCell className="font-medium text-sm">{part.name}</TableCell>
-                        <TableCell className="font-mono text-xs">{part.partNumber}</TableCell>
-                        <TableCell>
+                      <TableRow key={part.id} className="group">
+                        <TableCell className="font-medium text-xs py-2">{part.name}</TableCell>
+                        <TableCell className="font-mono text-[11px] py-2">{part.partNumber}</TableCell>
+                        <TableCell className="py-2">
                           <div className="flex items-center justify-center gap-1">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => updateQuantity(part.id, -1)}
-                            >
-                              <Minus className="h-3 w-3" />
+                            <Button variant="outline" size="icon" className="h-5 w-5" onClick={() => updateQuantity(part.id, -1)}>
+                              <Minus className="h-2.5 w-2.5" />
                             </Button>
-                            <span className="w-6 text-center font-semibold text-sm">{part.quantity}</span>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-6 w-6"
-                              onClick={() => updateQuantity(part.id, 1)}
-                            >
-                              <Plus className="h-3 w-3" />
+                            <span className="w-5 text-center font-semibold text-xs">{part.quantity}</span>
+                            <Button variant="outline" size="icon" className="h-5 w-5" onClick={() => updateQuantity(part.id, 1)}>
+                              <Plus className="h-2.5 w-2.5" />
                             </Button>
                           </div>
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="text-center py-2">
                           <button
-                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            className="text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
                             onClick={() => removePart(part.id)}
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                           </button>
                         </TableCell>
                       </TableRow>
@@ -376,7 +387,7 @@ const NovaOcorrencia = () => {
                   </TableBody>
                 </Table>
               </div>
-              <div className="p-4 border-t">
+              <div className="p-4 border-t mt-auto">
                 <Button className="w-full" onClick={handleSubmit}>
                   Solicitar Estoque
                 </Button>
