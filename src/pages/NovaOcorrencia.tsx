@@ -53,7 +53,7 @@ interface SelectedPart extends CatalogPart {
 
 const etapas = ["TREINO OPCIONAL 1", "TREINO OPCIONAL 2", "QUALIFICAÇÃO", "CORRIDA 1", "CORRIDA 2"];
 const sessoes = ["MANHÃ", "TARDE", "NOITE"];
-const ocorrenciasOptions = ["COLISÃO", "SAÍDA DE PISTA", "FALHA MECÂNICA", "INCIDENTE EM BOX", "OUTRO"];
+const ocorrenciasOptions = ["AVARIA", "MANUTENÇÃO"];
 
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
@@ -157,7 +157,7 @@ const NovaOcorrencia = () => {
         </div>
 
         <div className="space-y-2">
-          <Label>Chassi</Label>
+          <Label>Digite o chassi</Label>
           <Input placeholder="Ex: 123/II" value={chassi} onChange={(e) => setChassi(e.target.value)} />
         </div>
 
@@ -208,9 +208,11 @@ const NovaOcorrencia = () => {
         <div className="lg:col-span-2 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
-            <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" className="w-[250px] justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">Filtrar por:</span>
+              <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" className="w-[250px] justify-between">
                   {catalogCategories[activeCategory].label}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -237,13 +239,14 @@ const NovaOcorrencia = () => {
                   </CommandList>
                 </Command>
               </PopoverContent>
-            </Popover>
+              </Popover>
+            </div>
           </div>
-          <div className="relative border rounded-lg overflow-hidden bg-white">
+          <div className="relative border rounded-lg overflow-hidden bg-white max-h-[500px]">
             <img
               src={catalogoImg}
               alt="Catálogo de peças - diagrama explodido"
-              className="w-full h-auto object-contain"
+              className="w-full h-auto object-contain max-h-[500px]"
               draggable={false}
             />
             {currentCatalog.hotspots.map((spot) => {
@@ -280,7 +283,7 @@ const NovaOcorrencia = () => {
 
           <Dialog open={addPartOpen} onOpenChange={(open) => { setAddPartOpen(open); if (!open) setManualSearch(""); }}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-full mb-4">
+              <Button variant="outline" className="w-full mb-4 bg-white text-[hsl(0,100%,41%)] border-[hsl(0,100%,41%)] hover:bg-[hsl(0,100%,95%)] hover:text-[hsl(0,100%,35%)]">
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Peça
               </Button>
             </DialogTrigger>
