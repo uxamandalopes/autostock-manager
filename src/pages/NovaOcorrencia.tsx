@@ -208,9 +208,11 @@ const NovaOcorrencia = () => {
         <div className="lg:col-span-2 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-foreground">Catálogo de Peças</h2>
-            <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" className="w-[250px] justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">Filtrar por:</span>
+              <Popover open={catalogOpen} onOpenChange={setCatalogOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" role="combobox" className="w-[250px] justify-between">
                   {catalogCategories[activeCategory].label}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
