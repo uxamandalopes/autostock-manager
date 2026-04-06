@@ -108,6 +108,8 @@ const NovaOcorrencia = () => {
     setSelectedParts((prev) => prev.filter((p) => p.id !== id));
   };
 
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
+
   const handleSubmit = () => {
     if (!chassi || !piloto || !etapa || !sessao || !ocorrencia || !nomeAnalista) {
       toast.error("Preencha todos os campos obrigatórios.");
@@ -117,8 +119,7 @@ const NovaOcorrencia = () => {
       toast.error("Selecione pelo menos uma peça do catálogo.");
       return;
     }
-    toast.success("Solicitação de estoque enviada com sucesso!");
-    navigate("/ocorrencias");
+    setSubmitModalOpen(true);
   };
 
   return (
@@ -396,6 +397,42 @@ const NovaOcorrencia = () => {
           )}
         </div>
       </div>
+
+      {/* Modal de confirmação */}
+      <Dialog open={submitModalOpen} onOpenChange={setSubmitModalOpen}>
+        <DialogContent className="sm:max-w-md text-center">
+          <DialogHeader>
+            <DialogTitle className="text-center text-lg">O estoque foi solicitado. O que você deseja fazer?</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 justify-center">
+            <Button
+              onClick={() => {
+                setSubmitModalOpen(false);
+                setSelectedParts([]);
+                setChassi("");
+                setPiloto("");
+                setEtapa("");
+                setSessao("");
+                setOcorrencia("");
+                setNomeAnalista("");
+                setDate(new Date());
+                toast.success("Pronto para uma nova ocorrência.");
+              }}
+            >
+              Nova ocorrência
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSubmitModalOpen(false);
+                toast.info("Gerando relatório...");
+              }}
+            >
+              Gerar relatório
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
