@@ -63,7 +63,7 @@ const NovaOcorrencia = () => {
   const [etapa, setEtapa] = useState("");
   const [sessao, setSessao] = useState("");
   const [ocorrencia, setOcorrencia] = useState("");
-  const [nomeAnalista, setNomeAnalista] = useState("");
+  
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
   const [activeCategory, setActiveCategory] = useState("frente");
   const [manualSearch, setManualSearch] = useState("");
@@ -111,7 +111,7 @@ const NovaOcorrencia = () => {
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
   const handleSubmit = () => {
-    if (!chassi || !piloto || !etapa || !sessao || !ocorrencia || !nomeAnalista) {
+    if (!chassi || !piloto || !etapa || !sessao || !ocorrencia) {
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
@@ -203,10 +203,6 @@ const NovaOcorrencia = () => {
             </Select>
           </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Nome Analista</Label>
-            <Input className="h-9 text-sm" placeholder="Nome do analista" value={nomeAnalista} onChange={(e) => setNomeAnalista(e.target.value)} />
-          </div>
         </div>
       </div>
 
@@ -414,7 +410,7 @@ const NovaOcorrencia = () => {
                 setEtapa("");
                 setSessao("");
                 setOcorrencia("");
-                setNomeAnalista("");
+                
                 setDate(new Date());
                 toast.success("Pronto para uma nova ocorrência.");
               }}
