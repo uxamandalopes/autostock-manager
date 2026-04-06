@@ -252,11 +252,11 @@ const NovaOcorrencia = () => {
           </div>
 
           {/* Image only with hotspots */}
-          <div className="relative bg-white max-h-[420px] flex items-center justify-center overflow-hidden">
+          <div className="relative bg-white flex items-center justify-center overflow-hidden">
             <img
               src={catalogoImg}
               alt="Catálogo de peças"
-              className="w-full max-h-[420px] object-contain"
+              className="w-full object-contain"
               draggable={false}
             />
             {currentCatalog.hotspots.map((spot) => {
