@@ -65,7 +65,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
     );
   };
 
-  const isActive = (url: string) => location.pathname === url;
+  const isActive = (url: string) => location.pathname === url || location.pathname.startsWith(url + "/");
   const isGroupActive = (item: NavItem) =>
     item.children?.some((c) => location.pathname === c.url) ?? false;
   const isGroupOpen = (item: NavItem) =>
