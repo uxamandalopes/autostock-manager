@@ -51,7 +51,7 @@ export const catalogCategories: Record<string, Omit<CatalogCategory, 'image'> & 
       { id: 26, name: "Suporte Lateral Inferior", partNumber: "SLI-026" },
     ],
     hotspots: [
-      { id: 1, x: 5, y: 50 },
+      { id: 1, x: 7, y: 43 },
       { id: 2, x: 22, y: 42 },
       { id: 3, x: 24, y: 47 },
       { id: 4, x: 27, y: 40 },

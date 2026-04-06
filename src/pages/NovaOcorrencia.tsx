@@ -212,8 +212,8 @@ const NovaOcorrencia = () => {
 
       {/* Catalog + Selected Parts */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Catalog - 3 cols */}
-        <div className="lg:col-span-3 rounded-xl border bg-card shadow-sm overflow-hidden">
+        {/* Catalog - 2 cols */}
+        <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b bg-muted/30">
             <h2 className="text-sm font-semibold text-foreground">Catálogo de Peças</h2>
             <div className="flex items-center gap-2">
@@ -285,8 +285,8 @@ const NovaOcorrencia = () => {
           </p>
         </div>
 
-        {/* Selected Parts - 2 cols */}
-        <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col">
+        {/* Selected Parts - 3 cols */}
+        <div className="lg:col-span-3 rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col">
           <div className="p-4 border-b bg-muted/30">
             <h2 className="text-sm font-semibold text-foreground">
               Peças Selecionadas
