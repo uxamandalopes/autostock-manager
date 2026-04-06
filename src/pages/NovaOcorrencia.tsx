@@ -203,10 +203,6 @@ const NovaOcorrencia = () => {
             </Select>
           </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Nome Analista</Label>
-            <Input className="h-9 text-sm" placeholder="Nome do analista" value={nomeAnalista} onChange={(e) => setNomeAnalista(e.target.value)} />
-          </div>
         </div>
       </div>
 
