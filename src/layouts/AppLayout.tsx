@@ -14,7 +14,7 @@ export default function AppLayout() {
       />
       <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <header className="h-14 border-b bg-card flex items-center px-6 shrink-0">
+        <header className="h-14 border-b flex items-center px-6 shrink-0" style={{ backgroundColor: "#010101" }}>
           <img src={porscheLogo} alt="Porsche" className="h-8 object-contain" />
         </header>
         <main className="flex-1 overflow-auto">

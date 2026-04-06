@@ -90,7 +90,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+      <nav className="flex-1 overflow-hidden py-4 px-2 space-y-1">
         {navItems.map((item) => {
           const hasChildren = !!item.children;
           const active = !hasChildren && isActive(item.url);
