@@ -111,7 +111,7 @@ const NovaOcorrencia = () => {
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
   const handleSubmit = () => {
-    if (!chassi || !piloto || !etapa || !sessao || !ocorrencia || !nomeAnalista) {
+    if (!chassi || !piloto || !etapa || !sessao || !ocorrencia) {
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
