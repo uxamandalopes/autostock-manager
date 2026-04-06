@@ -410,7 +410,7 @@ const NovaOcorrencia = () => {
                 setEtapa("");
                 setSessao("");
                 setOcorrencia("");
-                setNomeAnalista("");
+                
                 setDate(new Date());
                 toast.success("Pronto para uma nova ocorrência.");
               }}
