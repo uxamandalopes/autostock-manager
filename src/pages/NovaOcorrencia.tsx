@@ -63,7 +63,7 @@ const NovaOcorrencia = () => {
   const [etapa, setEtapa] = useState("");
   const [sessao, setSessao] = useState("");
   const [ocorrencia, setOcorrencia] = useState("");
-  const [nomeAnalista, setNomeAnalista] = useState("");
+  
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
   const [activeCategory, setActiveCategory] = useState("frente");
   const [manualSearch, setManualSearch] = useState("");
