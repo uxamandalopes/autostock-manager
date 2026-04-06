@@ -74,13 +74,13 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        "flex h-screen flex-col text-sidebar-foreground shrink-0 transition-all duration-300",
+        "flex h-screen flex-col text-sidebar-foreground shrink-0 transition-all duration-300 sticky top-0",
         collapsed ? "w-16" : "w-64"
       )}
       style={{ background: "linear-gradient(180deg, #000000 0%, #D30021 100%)" }}
     >
       {/* Hamburger Toggle */}
-      <div className="flex items-center justify-center px-3 py-5 border-b border-sidebar-border">
+      <div className={cn("flex items-center px-3 py-5 border-b border-sidebar-border", collapsed ? "justify-center" : "justify-end")}>
         <button
           onClick={onToggle}
           className="p-2 rounded-md text-nav-active-foreground hover:bg-sidebar-border/30 transition-colors"
