@@ -108,6 +108,8 @@ const NovaOcorrencia = () => {
     setSelectedParts((prev) => prev.filter((p) => p.id !== id));
   };
 
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
+
   const handleSubmit = () => {
     if (!chassi || !piloto || !etapa || !sessao || !ocorrencia || !nomeAnalista) {
       toast.error("Preencha todos os campos obrigatórios.");
@@ -117,8 +119,7 @@ const NovaOcorrencia = () => {
       toast.error("Selecione pelo menos uma peça do catálogo.");
       return;
     }
-    toast.success("Solicitação de estoque enviada com sucesso!");
-    navigate("/ocorrencias");
+    setSubmitModalOpen(true);
   };
 
   return (

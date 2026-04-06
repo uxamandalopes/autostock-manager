@@ -12,6 +12,7 @@ import {
   Package,
   ClipboardList,
   ChevronDown,
+  Menu,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,12 @@ const navItems: NavItem[] = [
   },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  collapsed: boolean;
+  onToggle: () => void;
+}
+
+export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [openGroups, setOpenGroups] = useState<string[]>([]);
@@ -66,18 +72,25 @@ export function AppSidebar() {
     openGroups.includes(item.url) || isGroupActive(item);
 
   return (
-    <aside className="flex h-screen w-64 flex-col text-sidebar-foreground shrink-0"
-      style={{ background: "linear-gradient(180deg, #000000 0%, #D30021 100%)" }}>
-      {/* Logo / Title */}
-      <div className="flex items-center gap-3 px-5 py-6 border-b border-sidebar-border">
-        <Car className="h-8 w-8 text-nav-active-foreground" />
-        <span className="text-lg font-bold text-nav-active-foreground tracking-wide">
-          AutoEstoque
-        </span>
+    <aside
+      className={cn(
+        "flex h-screen flex-col text-sidebar-foreground shrink-0 transition-all duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}
+      style={{ background: "linear-gradient(180deg, #000000 0%, #D30021 100%)" }}
+    >
+      {/* Hamburger Toggle */}
+      <div className="flex items-center justify-center px-3 py-5 border-b border-sidebar-border">
+        <button
+          onClick={onToggle}
+          className="p-2 rounded-md text-nav-active-foreground hover:bg-sidebar-border/30 transition-colors"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
         {navItems.map((item) => {
           const hasChildren = !!item.children;
           const active = !hasChildren && isActive(item.url);
@@ -89,21 +102,24 @@ export function AppSidebar() {
               <button
                 onClick={() => {
                   if (hasChildren) {
+                    if (collapsed) return;
                     toggleGroup(item.url);
                   } else {
                     navigate(item.url);
                   }
                 }}
+                title={collapsed ? item.title : undefined}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                  collapsed && "justify-center px-0",
                   active || groupActive
                     ? "bg-nav-active text-nav-active-foreground"
                     : "text-sidebar-foreground hover:bg-sidebar-border/30"
                 )}
               >
                 <item.icon className="h-4 w-4 shrink-0" />
-                <span className="flex-1 text-left">{item.title}</span>
-                {hasChildren && (
+                {!collapsed && <span className="flex-1 text-left">{item.title}</span>}
+                {!collapsed && hasChildren && (
                   <ChevronDown
                     className={cn(
                       "h-4 w-4 transition-transform",
@@ -114,7 +130,7 @@ export function AppSidebar() {
               </button>
 
               {/* Subcategories */}
-              {hasChildren && open && (
+              {!collapsed && hasChildren && open && (
                 <div className="ml-4 mt-1 space-y-0.5 border-l border-sidebar-border/40 pl-3">
                   {item.children!.map((child) => {
                     const subActive = isActive(child.url);
@@ -142,13 +158,17 @@ export function AppSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="border-t border-sidebar-border px-3 py-4">
+      <div className="border-t border-sidebar-border px-2 py-4">
         <button
           onClick={() => navigate("/login")}
-          className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-border/30 transition-colors"
+          title={collapsed ? "Logout" : undefined}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-border/30 transition-colors",
+            collapsed && "justify-center px-0"
+          )}
         >
           <LogOut className="h-4 w-4" />
-          <span>Logout</span>
+          {!collapsed && <span>Logout</span>}
         </button>
       </div>
     </aside>
