@@ -31,8 +31,17 @@ interface Peca {
   eixoLado: string;
 }
 
+interface Servico {
+  id: string;
+  servicoFunilaria: string;
+  ocorrencia: string;
+  situacao: string;
+}
+
 const ListaDanos = () => {
   const navigate = useNavigate();
+
+  // Peças state
   const [pecas, setPecas] = useState<Peca[]>([
     {
       id: "1",
@@ -44,7 +53,6 @@ const ListaDanos = () => {
       eixoLado: "Dianteiro/Central",
     },
   ]);
-
   const [novaPecaOpen, setNovaPecaOpen] = useState(false);
   const [editPeca, setEditPeca] = useState<Peca | null>(null);
   const [formPeca, setFormPeca] = useState({
@@ -56,22 +64,26 @@ const ListaDanos = () => {
     eixoLado: "",
   });
 
+  // Serviços state
+  const [servicos, setServicos] = useState<Servico[]>([]);
+  const [novoServicoOpen, setNovoServicoOpen] = useState(false);
+  const [editServico, setEditServico] = useState<Servico | null>(null);
+  const [formServico, setFormServico] = useState({
+    servicoFunilaria: "",
+    ocorrencia: "",
+    situacao: "",
+  });
+
+  // Peça handlers
   const handleAddPeca = () => {
-    if (!formPeca.nome) {
-      toast.error("Preencha o nome da peça.");
-      return;
-    }
-    const nova: Peca = {
-      id: Date.now().toString(),
-      ...formPeca,
-    };
-    setPecas((prev) => [...prev, nova]);
+    if (!formPeca.nome) { toast.error("Preencha o nome da peça."); return; }
+    setPecas((prev) => [...prev, { id: Date.now().toString(), ...formPeca }]);
     setFormPeca({ nome: "", partNumber: "", quantidade: 1, estoque: "", ocorrencia: "", eixoLado: "" });
     setNovaPecaOpen(false);
     toast.success("Peça adicionada.");
   };
 
-  const handleEditSave = () => {
+  const handleEditSavePeca = () => {
     if (!editPeca) return;
     setPecas((prev) => prev.map((p) => (p.id === editPeca.id ? { ...editPeca, ...formPeca } : p)));
     setEditPeca(null);
@@ -79,21 +91,41 @@ const ListaDanos = () => {
     toast.success("Peça atualizada.");
   };
 
-  const handleDelete = (id: string) => {
+  const handleDeletePeca = (id: string) => {
     setPecas((prev) => prev.filter((p) => p.id !== id));
     toast.success("Peça removida.");
   };
 
-  const openEdit = (peca: Peca) => {
+  const openEditPeca = (peca: Peca) => {
     setEditPeca(peca);
-    setFormPeca({
-      nome: peca.nome,
-      partNumber: peca.partNumber,
-      quantidade: peca.quantidade,
-      estoque: peca.estoque,
-      ocorrencia: peca.ocorrencia,
-      eixoLado: peca.eixoLado,
-    });
+    setFormPeca({ nome: peca.nome, partNumber: peca.partNumber, quantidade: peca.quantidade, estoque: peca.estoque, ocorrencia: peca.ocorrencia, eixoLado: peca.eixoLado });
+  };
+
+  // Serviço handlers
+  const handleAddServico = () => {
+    if (!formServico.servicoFunilaria) { toast.error("Preencha o serviço."); return; }
+    setServicos((prev) => [...prev, { id: Date.now().toString(), ...formServico }]);
+    setFormServico({ servicoFunilaria: "", ocorrencia: "", situacao: "" });
+    setNovoServicoOpen(false);
+    toast.success("Serviço adicionado.");
+  };
+
+  const handleEditSaveServico = () => {
+    if (!editServico) return;
+    setServicos((prev) => prev.map((s) => (s.id === editServico.id ? { ...editServico, ...formServico } : s)));
+    setEditServico(null);
+    setFormServico({ servicoFunilaria: "", ocorrencia: "", situacao: "" });
+    toast.success("Serviço atualizado.");
+  };
+
+  const handleDeleteServico = (id: string) => {
+    setServicos((prev) => prev.filter((s) => s.id !== id));
+    toast.success("Serviço removido.");
+  };
+
+  const openEditServico = (servico: Servico) => {
+    setEditServico(servico);
+    setFormServico({ servicoFunilaria: servico.servicoFunilaria, ocorrencia: servico.ocorrencia, situacao: servico.situacao });
   };
 
   const PecaFormFields = () => (
@@ -107,9 +139,27 @@ const ListaDanos = () => {
     </div>
   );
 
+  const ServicoFormFields = () => (
+    <div className="grid gap-3 py-2">
+      <div><Label>Serviço Funilaria</Label><Input value={formServico.servicoFunilaria} onChange={(e) => setFormServico({ ...formServico, servicoFunilaria: e.target.value })} /></div>
+      <div><Label>Ocorrência</Label><Input value={formServico.ocorrencia} onChange={(e) => setFormServico({ ...formServico, ocorrencia: e.target.value })} /></div>
+      <div><Label>Situação</Label><Input value={formServico.situacao} onChange={(e) => setFormServico({ ...formServico, situacao: e.target.value })} /></div>
+    </div>
+  );
+
+  const ActionButtons = () => (
+    <div className="flex gap-3 justify-end pt-2">
+      <Button variant="outline" onClick={() => { toast.success("Análise finalizada."); navigate("/ocorrencias"); }}>
+        Finalizar análise
+      </Button>
+      <Button onClick={() => toast.info("Gerando ordem de serviço...")}>
+        Gerar ordem de serviço
+      </Button>
+    </div>
+  );
+
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-5 w-5" />
@@ -117,48 +167,36 @@ const ListaDanos = () => {
         <h1 className="text-2xl font-bold tracking-tight">Lista de Danos</h1>
       </div>
 
-      {/* Tabs */}
       <Tabs defaultValue="pecas" className="w-full">
-        <TabsList className="bg-muted/60 rounded-lg">
-          <TabsTrigger value="pecas" className="px-6">Peças</TabsTrigger>
-          <TabsTrigger value="servicos" className="px-6">Serviços</TabsTrigger>
-          <TabsTrigger value="imagens" className="px-6">Imagens</TabsTrigger>
+        <TabsList className="w-full justify-center bg-muted/60 rounded-lg">
+          <TabsTrigger value="pecas" className="px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Peças</TabsTrigger>
+          <TabsTrigger value="servicos" className="px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Serviços</TabsTrigger>
+          <TabsTrigger value="imagens" className="px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Imagens</TabsTrigger>
         </TabsList>
 
         {/* Tab Peças */}
         <TabsContent value="pecas" className="space-y-4 mt-4">
           <div className="flex justify-end">
-            <Button
-              onClick={() => {
-                setFormPeca({ nome: "", partNumber: "", quantidade: 1, estoque: "", ocorrencia: "", eixoLado: "" });
-                setNovaPecaOpen(true);
-              }}
-              className="gap-2"
-            >
+            <Button onClick={() => { setFormPeca({ nome: "", partNumber: "", quantidade: 1, estoque: "", ocorrencia: "", eixoLado: "" }); setNovaPecaOpen(true); }} className="gap-2">
               <Plus className="h-4 w-4" /> Nova peça
             </Button>
           </div>
-
           <div className="rounded-lg border overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-[hsl(var(--foreground))] hover:bg-[hsl(var(--foreground))]">
-                  <TableHead className="text-white font-semibold">Peça solicitada</TableHead>
-                  <TableHead className="text-white font-semibold">Part Number</TableHead>
-                  <TableHead className="text-white font-semibold">Quantidade</TableHead>
-                  <TableHead className="text-white font-semibold">Estoque</TableHead>
-                  <TableHead className="text-white font-semibold">Ocorrência</TableHead>
-                  <TableHead className="text-white font-semibold">Eixo/Lado</TableHead>
-                  <TableHead className="text-white font-semibold text-center">Ações</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Peça solicitada</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Part Number</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Quantidade</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Estoque</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Ocorrência</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Eixo/Lado</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {pecas.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      Nenhuma peça adicionada.
-                    </TableCell>
-                  </TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Nenhuma peça adicionada.</TableCell></TableRow>
                 ) : (
                   pecas.map((peca) => (
                     <TableRow key={peca.id}>
@@ -170,12 +208,8 @@ const ListaDanos = () => {
                       <TableCell>{peca.eixoLado}</TableCell>
                       <TableCell>
                         <div className="flex justify-center gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(peca)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(peca.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => openEditPeca(peca)}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeletePeca(peca.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -184,29 +218,53 @@ const ListaDanos = () => {
               </TableBody>
             </Table>
           </div>
-
-          <div className="flex gap-3 justify-end pt-2">
-            <Button variant="outline" onClick={() => { toast.success("Ocorrência finalizada."); navigate("/ocorrencias"); }}>
-              Finalizar ocorrência
-            </Button>
-            <Button onClick={() => toast.info("Gerando ordem de serviço...")}>
-              Gerar ordem de serviço
-            </Button>
-          </div>
+          <ActionButtons />
         </TabsContent>
 
         {/* Tab Serviços */}
-        <TabsContent value="servicos" className="mt-4">
-          <div className="flex items-center justify-center py-16 text-muted-foreground">
-            Em breve.
+        <TabsContent value="servicos" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Button onClick={() => { setFormServico({ servicoFunilaria: "", ocorrencia: "", situacao: "" }); setNovoServicoOpen(true); }} className="gap-2">
+              <Plus className="h-4 w-4" /> Novo serviço
+            </Button>
           </div>
+          <div className="rounded-lg border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-[hsl(var(--foreground))] hover:bg-[hsl(var(--foreground))]">
+                  <TableHead className="text-primary-foreground font-semibold">Serviço Funilaria</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Ocorrência</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold">Situação</TableHead>
+                  <TableHead className="text-primary-foreground font-semibold text-center">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {servicos.length === 0 ? (
+                  <TableRow><TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Nenhum serviço adicionado.</TableCell></TableRow>
+                ) : (
+                  servicos.map((servico) => (
+                    <TableRow key={servico.id}>
+                      <TableCell className="font-medium">{servico.servicoFunilaria}</TableCell>
+                      <TableCell>{servico.ocorrencia}</TableCell>
+                      <TableCell>{servico.situacao}</TableCell>
+                      <TableCell>
+                        <div className="flex justify-center gap-2">
+                          <Button variant="ghost" size="icon" onClick={() => openEditServico(servico)}><Pencil className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDeleteServico(servico.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          <ActionButtons />
         </TabsContent>
 
         {/* Tab Imagens */}
         <TabsContent value="imagens" className="mt-4">
-          <div className="flex items-center justify-center py-16 text-muted-foreground">
-            Em breve.
-          </div>
+          <div className="flex items-center justify-center py-16 text-muted-foreground">Em breve.</div>
         </TabsContent>
       </Tabs>
 
@@ -229,7 +287,31 @@ const ListaDanos = () => {
           <PecaFormFields />
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={() => setEditPeca(null)}>Cancelar</Button>
-            <Button onClick={handleEditSave}>Salvar</Button>
+            <Button onClick={handleEditSavePeca}>Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Novo Serviço */}
+      <Dialog open={novoServicoOpen} onOpenChange={setNovoServicoOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Novo serviço</DialogTitle></DialogHeader>
+          <ServicoFormFields />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setNovoServicoOpen(false)}>Cancelar</Button>
+            <Button onClick={handleAddServico}>Adicionar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Editar Serviço */}
+      <Dialog open={!!editServico} onOpenChange={(open) => { if (!open) setEditServico(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Editar serviço</DialogTitle></DialogHeader>
+          <ServicoFormFields />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setEditServico(null)}>Cancelar</Button>
+            <Button onClick={handleEditSaveServico}>Salvar</Button>
           </div>
         </DialogContent>
       </Dialog>
