@@ -21,6 +21,13 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+interface Servico {
+  id: string;
+  servicoFunilaria: string;
+  ocorrencia: string;
+  situacao: string;
+}
+
 interface Peca {
   id: string;
   nome: string;
