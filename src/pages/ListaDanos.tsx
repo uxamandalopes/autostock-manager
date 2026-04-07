@@ -373,6 +373,35 @@ const ListaDanos = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal Nova Imagem */}
+      <Dialog open={novaImagemOpen} onOpenChange={setNovaImagemOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Nova imagem</DialogTitle></DialogHeader>
+          <div className="grid gap-3 py-2">
+            <div>
+              <Label>Imagem</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFormImagem({ ...formImagem, file: e.target.files?.[0] || null })}
+              />
+            </div>
+            <div>
+              <Label>Descrição (opcional)</Label>
+              <Input
+                value={formImagem.descricao}
+                onChange={(e) => setFormImagem({ ...formImagem, descricao: e.target.value })}
+                placeholder="Descreva a imagem..."
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setNovaImagemOpen(false)}>Cancelar</Button>
+            <Button onClick={handleAddImagem}>Adicionar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
