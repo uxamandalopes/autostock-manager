@@ -421,7 +421,7 @@ const NovaOcorrencia = () => {
               variant="outline"
               onClick={() => {
                 setSubmitModalOpen(false);
-                toast.info("Gerando relatório...");
+                navigate("/ocorrencias/lista-danos");
               }}
             >
               Gerar relatório
