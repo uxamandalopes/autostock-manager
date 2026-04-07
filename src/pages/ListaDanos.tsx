@@ -18,8 +18,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Pencil, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
+
+interface Imagem {
+  id: string;
+  nome: string;
+  url: string;
+  descricao: string;
+}
 
 interface Peca {
   id: string;
@@ -73,6 +80,25 @@ const ListaDanos = () => {
     ocorrencia: "",
     situacao: "",
   });
+
+  // Imagens state
+  const [imagens, setImagens] = useState<Imagem[]>([]);
+  const [novaImagemOpen, setNovaImagemOpen] = useState(false);
+  const [formImagem, setFormImagem] = useState({ descricao: "", file: null as File | null });
+
+  const handleAddImagem = () => {
+    if (!formImagem.file) { toast.error("Selecione uma imagem."); return; }
+    const url = URL.createObjectURL(formImagem.file);
+    setImagens((prev) => [...prev, { id: Date.now().toString(), nome: formImagem.file!.name, url, descricao: formImagem.descricao }]);
+    setFormImagem({ descricao: "", file: null });
+    setNovaImagemOpen(false);
+    toast.success("Imagem adicionada.");
+  };
+
+  const handleDeleteImagem = (id: string) => {
+    setImagens((prev) => prev.filter((i) => i.id !== id));
+    toast.success("Imagem removida.");
+  };
 
   // Peça handlers
   const handleAddPeca = () => {
@@ -263,8 +289,40 @@ const ListaDanos = () => {
         </TabsContent>
 
         {/* Tab Imagens */}
-        <TabsContent value="imagens" className="mt-4">
-          <div className="flex items-center justify-center py-16 text-muted-foreground">Em breve.</div>
+        <TabsContent value="imagens" className="space-y-4 mt-4">
+          <div className="flex justify-end">
+            <Button onClick={() => { setFormImagem({ descricao: "", file: null }); setNovaImagemOpen(true); }} className="gap-2">
+              <Plus className="h-4 w-4" /> Nova imagem
+            </Button>
+          </div>
+
+          {imagens.length === 0 ? (
+            <div className="flex items-center justify-center py-16 text-muted-foreground border rounded-lg">
+              Nenhuma imagem adicionada.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {imagens.map((img) => (
+                <div key={img.id} className="relative group rounded-lg border overflow-hidden bg-card">
+                  <img src={img.url} alt={img.descricao || img.nome} className="w-full h-48 object-cover" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                    onClick={() => handleDeleteImagem(img.id)}
+                  >
+                    <X className="h-4 w-4 text-destructive" />
+                  </Button>
+                  <div className="p-2">
+                    <p className="text-sm font-medium truncate">{img.nome}</p>
+                    {img.descricao && <p className="text-xs text-muted-foreground truncate">{img.descricao}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <ActionButtons />
         </TabsContent>
       </Tabs>
 
