@@ -58,9 +58,15 @@ const ocorrenciasOptions = ["AVARIA", "MANUTENÇÃO"];
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { date?: string; chassi?: string; piloto?: string; etapa?: string; sessao?: string; ocorrencia?: string } | null;
+  const state = location.state as { date?: string | Date; chassi?: string; piloto?: string; etapa?: string; sessao?: string; ocorrencia?: string } | null;
 
-  const [date, setDate] = useState<Date>(state?.date ? new Date(state.date) : new Date());
+  const [date, setDate] = useState<Date>(() => {
+    if (state?.date) {
+      const d = new Date(state.date);
+      return isNaN(d.getTime()) ? new Date() : d;
+    }
+    return new Date();
+  });
   const [chassi, setChassi] = useState(state?.chassi || "");
   const [piloto, setPiloto] = useState(state?.piloto || "");
   const [etapa, setEtapa] = useState(state?.etapa || "");
