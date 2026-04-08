@@ -421,7 +421,17 @@ const NovaOcorrencia = () => {
               variant="outline"
               onClick={() => {
                 setSubmitModalOpen(false);
-                navigate("/ocorrencias/lista-danos");
+                navigate("/ocorrencias/lista-danos", {
+                  state: { pecas: selectedParts.map(p => ({
+                    id: p.id.toString(),
+                    nome: p.name,
+                    partNumber: p.partNumber,
+                    quantidade: p.quantity,
+                    estoque: "Pendente",
+                    ocorrencia: ocorrencia || "",
+                    eixoLado: "",
+                  })) }
+                });
               }}
             >
               Gerar relatório
