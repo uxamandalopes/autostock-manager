@@ -26,7 +26,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { title: "Ocorrências", url: "/ocorrencias", icon: AlertTriangle },
-  { title: "Análise de Danos", url: "/analise-danos", icon: Search },
   {
     title: "Cronogramas",
     url: "/cronogramas",
