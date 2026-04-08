@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -57,12 +57,15 @@ const ocorrenciasOptions = ["AVARIA", "MANUTENÇÃO"];
 
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
-  const [date, setDate] = useState<Date>(new Date());
-  const [chassi, setChassi] = useState("");
-  const [piloto, setPiloto] = useState("");
-  const [etapa, setEtapa] = useState("");
-  const [sessao, setSessao] = useState("");
-  const [ocorrencia, setOcorrencia] = useState("");
+  const location = useLocation();
+  const state = location.state as { date?: string; chassi?: string; piloto?: string; etapa?: string; sessao?: string; ocorrencia?: string } | null;
+
+  const [date, setDate] = useState<Date>(state?.date ? new Date(state.date) : new Date());
+  const [chassi, setChassi] = useState(state?.chassi || "");
+  const [piloto, setPiloto] = useState(state?.piloto || "");
+  const [etapa, setEtapa] = useState(state?.etapa || "");
+  const [sessao, setSessao] = useState(state?.sessao || "");
+  const [ocorrencia, setOcorrencia] = useState(state?.ocorrencia || "");
   
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
   const [activeCategory, setActiveCategory] = useState("frente");
