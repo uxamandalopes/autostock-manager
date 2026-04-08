@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -47,19 +47,11 @@ interface Servico {
 
 const ListaDanos = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const pecasFromCatalog = (location.state as { pecas?: Peca[] })?.pecas || [];
 
   // Peças state
-  const [pecas, setPecas] = useState<Peca[]>([
-    {
-      id: "1",
-      nome: "Para-choque dianteiro",
-      partNumber: "9Y0807221A",
-      quantidade: 1,
-      estoque: "Disponível",
-      ocorrencia: "Avaria",
-      eixoLado: "Dianteiro/Central",
-    },
-  ]);
+  const [pecas, setPecas] = useState<Peca[]>(pecasFromCatalog);
   const [novaPecaOpen, setNovaPecaOpen] = useState(false);
   const [editPeca, setEditPeca] = useState<Peca | null>(null);
   const [formPeca, setFormPeca] = useState({
